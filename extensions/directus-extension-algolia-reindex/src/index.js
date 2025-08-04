@@ -149,6 +149,89 @@ export default {
         res.send("Algolia reindex endpoint is working");
       });
 
+      // Update single property route
+      router.post("/update-property", async (req, res) => {
+        console.log("POST /update-property route hit");
+
+        if (req.accountability?.user == null) {
+          console.log("Unauthorized access attempt");
+          return res.json({
+            message: "Unauthorized access attempt",
+            success: false,
+          });
+        }
+
+        try {
+          const { propertyCode, shouldDelete = false } = req.body;
+
+          if (!propertyCode) {
+            return res.json({
+              message: "Property code is required",
+              success: false,
+            });
+          }
+
+          // Handle both boolean and string boolean values
+          const shouldDeleteBool = shouldDelete === true || shouldDelete === "true";
+
+          console.log(`Updating property ${propertyCode} in Algolia. Delete: ${shouldDeleteBool}`);
+
+          if (shouldDeleteBool) {
+            // Delete the property from Algolia if it shouldn't be shown
+            await index.deleteObject(propertyCode);
+            console.log(`Deleted property ${propertyCode} from Algolia`);
+
+            return res.json({
+              message: `Property ${propertyCode} deleted from Algolia`,
+              success: true,
+              action: "deleted",
+            });
+          } else {
+            // Fetch the property from Directus
+            const propertiesService = new ItemsService("properties", {
+              schema: req.schema,
+            });
+
+            const properties = await propertiesService.readByQuery({
+              filter: {
+                code: {
+                  _eq: propertyCode,
+                },
+              },
+              limit: 1,
+            });
+
+            if (properties.length === 0) {
+              return res.json({
+                message: `Property ${propertyCode} not found in Directus`,
+                success: false,
+              });
+            }
+
+            const property = properties[0];
+            const transformedProperty = transformPropertyForAlgolia(property);
+
+            // Update or create the property in Algolia
+            await index.saveObject(transformedProperty);
+            console.log(`Updated property ${propertyCode} in Algolia`);
+
+            return res.json({
+              message: `Property ${propertyCode} updated in Algolia`,
+              success: true,
+              action: "updated",
+              data: transformedProperty,
+            });
+          }
+        } catch (error) {
+          console.error("Update property error:", error);
+          return res.json({
+            message: error.message || "Failed to update property in Algolia",
+            success: false,
+            error: true,
+          });
+        }
+      });
+
       // Reindex route
       router.post("/reindex", async (req, res) => {
         console.log("POST /reindex route hit");
