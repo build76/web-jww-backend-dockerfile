@@ -76,7 +76,7 @@ export default {
           objectID: property.code,
           code: property.code,
           image: property.featuredImageUrl,
-          imagecount: property.images?.length || 0,
+          imagecount: property.images?.filter((item) => item.type === "photograph").length || 0,
           address1: property.address?.line1,
           address2: property.address?.line2,
           address3: property.address?.line3,
