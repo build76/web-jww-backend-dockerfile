@@ -104,6 +104,14 @@
             <p style="margin-bottom: 5px;">{{ viewing.county }}</p>
             <p style="margin-bottom: 5px;">{{ viewing.postcode }}</p>
 
+						<h2>Property Address</h2>                                                                           
+						{% if property.address %}              
+						<p style="margin-bottom: 5px;">{{ property.address.line1 }}</p>
+						{% if property.address.line2 %}<p style="margin-bottom: 5px;">{{ property.address.line2 }}</p>{% endif %}                                          
+						{% if property.address.line3 %}<p style="margin-bottom: 5px;">{{ property.address.line3 }}</p>{% endif %}                                          
+						{% if property.address.line4 %}<p style="margin-bottom: 5px;">{{ property.address.line4 }}</p>{% endif %}                                          
+						{% endif %}
+
             <h2>Additional Information</h2>
             <p style="margin-bottom: 5px;"><strong>Property Link:</strong> <a href="https://jww.co.uk/{% if viewing.mode == 'selling' %}buy{% elsif viewing.mode == 'letting' %}rent{% else %}{{ viewing.mode }}{% endif %}/{{ viewing.code }}">View Property</a></p>
             <p style="margin-bottom: 5px;"><strong>Availability:</strong></p>
