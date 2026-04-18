@@ -105,11 +105,13 @@
             <p style="margin-bottom: 5px;">{{ viewing.postcode }}</p>
 
 						<h2>Property Address</h2>                                                                           
-						{% if property.address %}              
-						<p style="margin-bottom: 5px;">{{ property.address.line1 }}</p>
-						{% if property.address.line2 %}<p style="margin-bottom: 5px;">{{ property.address.line2 }}</p>{% endif %}                                          
-						{% if property.address.line3 %}<p style="margin-bottom: 5px;">{{ property.address.line3 }}</p>{% endif %}                                          
-						{% if property.address.line4 %}<p style="margin-bottom: 5px;">{{ property.address.line4 }}</p>{% endif %}                                          
+						<h2>Property Address</h2>
+						{% if property.address %}
+						<p style="margin-bottom: 5px;">{% if property.address.buildingName != "" %}{{ property.address.buildingName }}, {% endif %}{% if
+						property.address.buildingNumber != "" %}{{ property.address.buildingNumber }}, {% endif %}{% if property.address.line1 != "" %}{{
+						property.address.line1 }}, {% endif %}{% if property.address.line2 != "" %}{{ property.address.line2 }}, {% endif %}{% if property.address.line3 !=
+						"" %}{{ property.address.line3 }}, {% endif %}{% if property.address.line4 != "" %}{{ property.address.line4 }}, {% endif %}{{
+						property.address.postcode }}</p>
 						{% endif %}
 
             <h2>Additional Information</h2>
